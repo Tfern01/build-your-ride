@@ -19,10 +19,11 @@
           border-radius:999px; transform:rotate(-4deg) translateY(-7px);
           box-shadow:0 3px 9px rgba(80,60,220,.35); }
   .main { flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; min-height:0; }
-  .scene { flex:0 0 auto; position:relative; aspect-ratio:1400/520;
+  .scene { flex:0 0 auto; position:relative; aspect-ratio:1400/520; overflow:hidden;
+           margin-left:-14px; margin-right:-14px;
            background:linear-gradient(180deg,#f5f5f2 39%,#e0e0db 39%); }
-  .gshadow { position:absolute; left:5%; right:3%; bottom:17.5%; height:6.5%; border-radius:50%;
-             background:rgba(15,15,20,.26); filter:blur(14px); z-index:0; }
+  .gshadow { position:absolute; left:-14%; right:-14%; bottom:16.5%; height:7.5%; border-radius:50%;
+             background:rgba(15,15,20,.24); filter:blur(16px); z-index:0; }
   .cshadow { position:absolute; bottom:20%; width:13.5%; height:2.8%; transform:translateX(-50%);
              border-radius:50%; background:rgba(10,10,14,.38); filter:blur(6px); z-index:0; }
   .carbox { position:absolute; top:0; left:0; right:0; aspect-ratio:1400/405; z-index:1; }
