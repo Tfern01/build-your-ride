@@ -12,9 +12,12 @@
   .app { height:100dvh; max-width:940px; margin:0 auto; padding:14px 14px 10px;
          display:flex; flex-direction:column; }
   header { text-align:center; flex:0 0 auto; }
-  .eyebrow { font-size:11px; letter-spacing:.22em; font-weight:700; color:#8a8a8e; }
-  h1 { font-size:clamp(24px, 4.5vh, 36px); font-weight:800; letter-spacing:-.02em; }
-  .sub { color:#5c5c60; font-size:13.5px; margin-top:2px; }
+  h1 { font-size:clamp(24px, 4.5vh, 36px); font-weight:800; letter-spacing:-.02em;
+       display:flex; justify-content:center; align-items:center; gap:10px; }
+  .beta { font-size:11px; font-weight:800; letter-spacing:.16em; color:#fff;
+          background:linear-gradient(92deg,#7c3aed,#2563eb); padding:4px 9px 5px;
+          border-radius:999px; transform:rotate(-4deg) translateY(-7px);
+          box-shadow:0 3px 9px rgba(80,60,220,.35); }
   .stage { margin-top:12px; flex:0 0 auto;
            background:linear-gradient(180deg,#fdfdfc 0%,#f0efec 62%,#e3e2de 100%);
            border:1px solid #e0dfdb; border-radius:22px; padding:26px 18px 20px;
@@ -24,8 +27,11 @@
   .carbox img.wheel { position:absolute; transform:translate(-50%,-50%); pointer-events:none; }
   .shadow { position:absolute; left:6%; right:4%; bottom:5%; height:22px; border-radius:50%;
             background:rgba(0,0,0,.20); filter:blur(12px); }
-  .summary { text-align:center; margin-top:12px; font-size:16px; font-weight:600; flex:0 0 auto; }
-  .summary span { color:#6d6d72; font-weight:500; }
+  .custombar { margin-top:12px; flex:0 0 auto; background:#fff; border:1px solid #e4e3df;
+               border-radius:14px; padding:12px 16px; display:flex; justify-content:space-between;
+               align-items:center; gap:12px; box-shadow:0 4px 14px rgba(0,0,0,.05); }
+  .cb-car { font-weight:700; font-size:15px; white-space:nowrap; }
+  .cb-build { color:#5c5c60; font-weight:600; font-size:14px; text-align:right; }
   .controls { flex:1 1 auto; display:flex; flex-direction:column; justify-content:center;
               gap:40px; min-height:0; }
   .ctrl-head { display:flex; justify-content:space-between; align-items:baseline; padding:0 4px; }
@@ -56,15 +62,13 @@
            box-shadow:0 2px 8px rgba(0,0,0,.10); }
   .arrow.prev { left:-4px; } .arrow.next { right:-4px; }
   .note { flex:0 0 auto; text-align:center; color:#a2a2a7; font-size:11.5px; line-height:1.5; padding-top:6px; }
-  @media (max-height:640px) { .sub, .note { display:none; } }
+  @media (max-height:640px) { .note { display:none; } }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <div class="eyebrow">PROTOTYPE</div>
-    <h1>Build Your Ride</h1>
-    <p class="sub">’78–’88 G-Body Coupe — swipe the wheels and paint, the car stays right here.</p>
+    <h1>Build Your Ride <span class="beta">BETA</span></h1>
   </header>
 
   <div class="stage">
@@ -75,7 +79,10 @@
       <img class="wheel" id="wheelR" alt="">
     </div>
   </div>
-  <p class="summary" id="summary"></p>
+  <div class="custombar">
+    <div class="cb-car">’78–’88 G-Body Coupe</div>
+    <div class="cb-build" id="summary"></div>
+  </div>
 
   <div class="controls">
     <div class="ctrl">
@@ -96,7 +103,7 @@
     </div>
   </div>
 
-  <p class="note">Prototype for review — one car, more platforms to come. Every wheel shows at one size here; real fitment varies.</p>
+  <p class="note">One car for now — more platforms to come. Every wheel shows at one size here; real fitment varies.</p>
 </div>
 
 <script>
@@ -193,11 +200,11 @@ function placeWheels(){
   updateSummary();
 }
 function updateSummary(){
-  document.getElementById('summary').innerHTML =
-    'G-Body Coupe <span>·</span> ' + curPaint.name + ' <span>·</span> ' + curWheel.name;
+  document.getElementById('summary').textContent =
+    curPaint.name + ' · ' + curWheel.name;
 }
 
-/* --- swipe rails: the card snapped to center is the selection --- */
+/* --- swipe rails: swiping only browses; a tap (or arrow) selects --- */
 function centerCard(rail, card, smoothIt = true){
   const target = card.offsetLeft - rail.clientWidth/2 + card.clientWidth/2;
   rail.scrollTo({ left: target, behavior: smoothIt ? 'smooth' : 'auto' });
@@ -210,16 +217,12 @@ function nearestCard(rail, cards){
   return best;
 }
 function wireRail(rail, cards, select){
-  let timer = null;
-  rail.addEventListener('scroll', () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => select(nearestCard(rail, cards)), 80);
-  }, { passive:true });
   cards.forEach(c => c.addEventListener('click', () => { select(c); centerCard(rail, c); }));
 }
-function stepRail(rail, cards, dir){
+function stepRail(rail, cards, dir, select){
   const cur = nearestCard(rail, cards);
   const i = Math.min(cards.length-1, Math.max(0, cards.indexOf(cur) + dir));
+  select(cards[i]);
   centerCard(rail, cards[i]);
 }
 
@@ -230,14 +233,15 @@ const wheelCards = WHEELS.map(w => {
   b.innerHTML = '<img src="'+w.src+'" alt=""><div>'+w.name+'</div>';
   b._item = w; wheelRail.appendChild(b); return b;
 });
-wireRail(wheelRail, wheelCards, card => {
+const selectWheel = card => {
   if(card._item === curWheel) return;
   curWheel = card._item;
   wheelCards.forEach(x=>x.classList.toggle('active', x===card));
   placeWheels();
-});
-document.getElementById('wPrev').onclick = () => stepRail(wheelRail, wheelCards, -1);
-document.getElementById('wNext').onclick = () => stepRail(wheelRail, wheelCards, +1);
+};
+wireRail(wheelRail, wheelCards, selectWheel);
+document.getElementById('wPrev').onclick = () => stepRail(wheelRail, wheelCards, -1, selectWheel);
+document.getElementById('wNext').onclick = () => stepRail(wheelRail, wheelCards, +1, selectWheel);
 
 const paintRail = document.getElementById('paintRail');
 const paintCards = PAINTS.map(p => {
@@ -246,14 +250,15 @@ const paintCards = PAINTS.map(p => {
   b.innerHTML = '<i style="background:'+p.hex+'"></i><div>'+p.name+'</div>';
   b._item = p; paintRail.appendChild(b); return b;
 });
-wireRail(paintRail, paintCards, card => {
+const selectPaint = card => {
   if(card._item === curPaint) return;
   curPaint = card._item;
   paintCards.forEach(x=>x.classList.toggle('active', x===card));
   applyPaint(curPaint);
-});
-document.getElementById('pPrev').onclick = () => stepRail(paintRail, paintCards, -1);
-document.getElementById('pNext').onclick = () => stepRail(paintRail, paintCards, +1);
+};
+wireRail(paintRail, paintCards, selectPaint);
+document.getElementById('pPrev').onclick = () => stepRail(paintRail, paintCards, -1, selectPaint);
+document.getElementById('pNext').onclick = () => stepRail(paintRail, paintCards, +1, selectPaint);
 </script>
 </body>
 </html>
