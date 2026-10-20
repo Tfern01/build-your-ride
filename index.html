@@ -28,21 +28,22 @@
   .shadow { position:absolute; left:6%; right:4%; bottom:5%; height:22px; border-radius:50%;
             background:rgba(0,0,0,.20); filter:blur(12px); }
   .custombar { margin-top:12px; flex:0 0 auto; background:#fff; border:1px solid #e4e3df;
-               border-radius:14px; padding:12px 16px; display:flex; justify-content:space-between;
-               align-items:center; gap:12px; box-shadow:0 4px 14px rgba(0,0,0,.05); }
-  .cb-car { font-weight:700; font-size:15px; white-space:nowrap; }
-  .cb-build { color:#5c5c60; font-weight:600; font-size:14px; text-align:right; }
+               border-radius:14px; padding:12px 16px; display:grid;
+               grid-template-columns:1fr auto 1fr; align-items:center; gap:12px;
+               box-shadow:0 4px 14px rgba(0,0,0,.05); }
+  .cb-car { font-weight:700; font-size:15px; white-space:nowrap; text-align:center; grid-column:2; }
+  .cb-build { color:#5c5c60; font-weight:600; font-size:14px; text-align:right; grid-column:3; }
   .controls { flex:1 1 auto; display:flex; flex-direction:column; justify-content:center;
               gap:40px; min-height:0; }
   .ctrl-head { display:flex; justify-content:space-between; align-items:baseline; padding:0 4px; }
   .ctrl-head h2 { font-size:13px; letter-spacing:.09em; font-weight:700; color:#3a3a3c;
                   text-transform:uppercase; }
-  .ctrl-head span { font-size:12px; color:#a2a2a7; font-weight:600; }
+  .ctrl-head span { font-size:13px; color:#1c1c1e; font-weight:700; }
   .railwrap { position:relative; margin-top:8px; }
   .rail { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory;
-          padding:4px calc(50% - 56px); scrollbar-width:none; }
+          padding:4px 6px; scrollbar-width:none; }
   .rail::-webkit-scrollbar { display:none; }
-  .rail.paint { padding:4px calc(50% - 40px); }
+  .rail.paint { padding:4px 6px; }
   .wcard { flex:0 0 auto; width:112px; scroll-snap-align:center; background:#fff;
            border:2px solid #e4e3df; border-radius:16px; padding:9px 6px 7px; cursor:pointer;
            text-align:center; transition:border-color .15s; }
@@ -86,7 +87,7 @@
 
   <div class="controls">
     <div class="ctrl">
-      <div class="ctrl-head"><h2>Wheels</h2><span>swipe ↔</span></div>
+      <div class="ctrl-head"><h2>Wheels</h2><span id="wheelName"></span></div>
       <div class="railwrap">
         <button class="arrow prev" id="wPrev" aria-label="Previous wheel">‹</button>
         <div class="rail" id="wheelRail"></div>
@@ -94,7 +95,7 @@
       </div>
     </div>
     <div class="ctrl">
-      <div class="ctrl-head"><h2>Paint</h2><span>swipe ↔</span></div>
+      <div class="ctrl-head"><h2>Paint</h2><span id="paintName"></span></div>
       <div class="railwrap">
         <button class="arrow prev" id="pPrev" aria-label="Previous paint">‹</button>
         <div class="rail paint" id="paintRail"></div>
@@ -200,8 +201,9 @@ function placeWheels(){
   updateSummary();
 }
 function updateSummary(){
-  document.getElementById('summary').textContent =
-    curPaint.name + ' · ' + curWheel.name;
+  document.getElementById('summary').textContent = curPaint.name;
+  document.getElementById('wheelName').textContent = curWheel.name;
+  document.getElementById('paintName').textContent = curPaint.name;
 }
 
 /* --- swipe rails: swiping only browses; a tap (or arrow) selects --- */
