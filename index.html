@@ -351,7 +351,7 @@ sceneEl.addEventListener('pointerdown', e => {
 });
 sceneEl.addEventListener('pointermove', e => {
   if(dragX === null || !curCar.spin) return;
-  showSpin(dragStartIdx + Math.round((e.clientX - dragX) / SPIN_STEP));
+  showSpin(dragStartIdx - Math.round((e.clientX - dragX) / SPIN_STEP));  /* car follows the swipe: drag right pulls the nose around toward front 3/4 */
 });
 ['pointerup', 'pointercancel'].forEach(ev =>
   sceneEl.addEventListener(ev, () => { dragX = null; }));
