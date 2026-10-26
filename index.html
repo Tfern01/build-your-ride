@@ -375,9 +375,10 @@ const PLATE_STATES = {
   NY:  {label:'New York',   bg:'#f7c948', line:'#1c1c1e', header:'NEW YORK',   headerColor:'#1a2a6b', textColor:'#1a2a6b', star:false},
   STD: {label:'Classic',    bg:'#f5f5f2', line:'#1c1c1e', header:null,        headerColor:'#111111', textColor:'#111111', star:false},
 };
-const PLATE_RECT = {  /* straight-rear frame coords: [x0, y0, x1, y1] */
-  monte: [508, 154, 592, 196],
-  ss:    [502, 144, 598, 188],
+const PLATE_RECT = {  /* straight-rear frame coords: [x0, y0, x1, y1] — sized
+   so a full 7 characters sit at full size with margin on both cars */
+  monte: [500, 152, 600, 198],
+  ss:    [496, 142, 604, 190],
 };
 let plateCfg = {state: '', text: ''};
 function drawStar(c, x, y, r){
