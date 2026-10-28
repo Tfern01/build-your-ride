@@ -82,12 +82,14 @@
   .rail.paint { padding:4px 6px; }
   .wcard { flex:0 0 auto; width:112px; scroll-snap-align:center; background:#fff;
            border:2px solid #e4e3df; border-radius:16px; padding:9px 6px 7px; cursor:pointer;
-           text-align:center; transition:border-color .15s; }
+           text-align:center; transition:border-color .15s;
+           display:flex; flex-direction:column; align-items:center; justify-content:flex-start; }
   .wcard img { width:80px; height:80px; border-radius:50%; background:#ececea; display:block; margin:0 auto; }
   .wcard div { font-size:11px; font-weight:600; margin-top:6px; color:#3a3a3c; line-height:1.2; }
   .wcard.active { border-color:#0a66ff; }
   .pcard { flex:0 0 auto; width:62px; scroll-snap-align:center; background:none; border:none;
-           cursor:pointer; text-align:center; padding:2px 0; }
+           cursor:pointer; text-align:center; padding:2px 0;
+           display:flex; flex-direction:column; align-items:center; justify-content:flex-start; }
   .pcard i { display:block; width:40px; height:40px; border-radius:50%; margin:0 auto;
              border:2px solid rgba(0,0,0,.10);
              box-shadow:inset 0 -6px 10px rgba(0,0,0,.18), inset 0 4px 8px rgba(255,255,255,.35); }
